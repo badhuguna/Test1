@@ -1,0 +1,121 @@
+import { Box, Button, VisuallyHidden } from '@leagueplatform/genesis-core';
+import { useIntl } from '@leagueplatform/locales';
+import { useLiveChatCta } from '@leagueplatform/live-chat';
+import MessagesBubbleTypingIcon from 'assets/icons/messages-bubble-typing.svg';
+import { UnreadMessageIndicator } from './live-chat-unread-message-indicator';
+
+export function LiveChatCTA() {
+  const { formatMessage } = useIntl();
+  const { openChat, unreadMessageCount, liveChatButtonRef } = useLiveChatCta();
+
+  return (
+    <Box
+      css={{
+        position: 'fixed',
+        bottom: '1rem',
+        right: '1rem',
+      }}
+    >
+      <UnreadMessageIndicator unreadMessageCount={unreadMessageCount}>
+        <Button
+          icon={MessagesBubbleTypingIcon}
+          hideLabel
+          priority="primary"
+          onClick={openChat}
+          ref={liveChatButtonRef}
+          css={{
+            '.GDS-icon': { width: '3rem', height: '3rem', margin: '0.5rem' },
+          }}
+          aria-live="polite"
+        >
+          <span aria-hidden>{formatMessage({ id: 'LIVE_CHAT' })}</span>
+          {unreadMessageCount > 0 ? (
+            <VisuallyHidden>
+              {formatMessage(
+                { id: 'LIVE_CHAT_UNREAD_MESSAGES' },
+                { count: unreadMessageCount },
+              )}
+            </VisuallyHidden>
+          ) : (
+            formatMessage({ id: 'LIVE_CHAT' })
+          )}
+        </Button>
+      </UnreadMessageIndicator>
+    </Box>
+  );
+}
+
+
+
+
+
+import { Box, UtilityText } from '@leagueplatform/genesis-core';
+import { MAX_DISPLAY_MESSAGES_COUNT } from 'common/constants';
+
+type UnreadMessageIndicatorProps = {
+  unreadMessageCount: number;
+  children: React.ReactNode;
+};
+
+export function UnreadMessageIndicator({
+  unreadMessageCount,
+  children,
+}: UnreadMessageIndicatorProps) {
+  return (
+    <Box
+      css={{
+        position: 'relative',
+        width: 'fit-content',
+      }}
+    >
+      {unreadMessageCount > 0 ? (
+        <Box
+          css={{
+            position: 'absolute',
+            right: 0,
+            transform: 'translate(30%)',
+            borderRadius: '50%',
+            backgroundColor: '$criticalIcon',
+            pointerEvents: 'none',
+            width: 23,
+            height: 23,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <UtilityText
+            aria-hidden
+            css={{
+              typography: '$caption',
+              color: '$onSurfaceTextReversed',
+            }}
+          >
+            {unreadMessageCount > MAX_DISPLAY_MESSAGES_COUNT
+              ? `${MAX_DISPLAY_MESSAGES_COUNT}+`
+              : unreadMessageCount}
+          </UtilityText>
+        </Box>
+      ) : null}
+      {children}
+    </Box>
+  );
+}
+
+
+
+
+
+import { LiveChatContainer, useLiveChatCta } from '@leagueplatform/live-chat';
+import { LiveChatCTA } from './live-chat-cta.component';
+
+export function LiveChat() {
+  const { isVisible } = useLiveChatCta();
+
+  return (
+    <>
+      {isVisible ? <LiveChatCTA /> : null}
+      <LiveChatContainer />
+    </>
+  );
+}
