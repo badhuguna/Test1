@@ -1,0 +1,298 @@
+import React from 'react';
+import { fireEvent, render, screen } from '@leagueplatform/test-util';
+import { expect } from 'vitest';
+import { PolicyHolderInformation } from '../../components/forms/forms-type/dental/pages/policyholder-information.component';
+import {
+  profileResponseData,
+  planDetailsResponseData,
+  profileResponseDataDependentZero,
+  profileResponseDataDependentWithoutName,
+  planDetailsResponseDataZeroMember,
+  planDetailsResponseDataWithoutMember,
+  profileResponseDataRelDep,
+} from '../../mockData';
+
+const footerToBottom = () => {};
+const errorHandling = () => {};
+
+describe('Checking Form Instruction component data', () => {
+  test('Chceking Heading of Form Instruction component', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const heading = screen.getByTestId('step2');
+    expect(heading).toBeInTheDocument();
+  });
+});
+
+describe('Checking Form Instruction component data', () => {
+  test('useEffect with zero members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseDataWithoutMember}
+      />,
+    );
+  });
+
+  test('useEffect with zero dependents and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentZero}
+        planDetailsResponseData={planDetailsResponseDataWithoutMember}
+      />,
+    );
+  });
+
+  test('useEffect with 1 dependents without required data and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentWithoutName}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+  });
+
+  test('useEffect with zero dependents and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentZero}
+        planDetailsResponseData={planDetailsResponseDataZeroMember}
+      />,
+    );
+  });
+
+  test('useEffect with members but relation is dependent', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataRelDep}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+  });
+});
+
+describe('Check onblur and onkeyup functions', () => {
+  test('Zip Code validations covered onblur and keypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const inputField = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(inputField, { target: { value: '' } });
+    fireEvent.blur(inputField);
+    const errorMessage = screen.getByText('zip code is required.');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('Zip Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const zipCode = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(zipCode, { target: { value: '123' } });
+    fireEvent.keyPress(zipCode);
+    const errorMessage = screen.getByText('Please enter a valid zip code.');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('valid Zip Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const zipCode = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(zipCode, { target: { value: '12345' } });
+    fireEvent.keyPress(zipCode);
+  });
+
+  test('Date of birth Code validations covered onBlur', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const dateField = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField, { target: { value: '' } });
+    fireEvent.blur(dateField);
+    const errorMessage = screen.getByText('Date of birth is required.');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('Date of birth Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const dateField = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField, { target: { value: '2023/12/12' } });
+    fireEvent.keyPress(dateField);
+    const errorMessage = screen.getByText(
+      'Please enter a valid date of birth.',
+    );
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('Date of birth Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const dateField = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField, { target: { value: '03/09/2024' } });
+    fireEvent.keyPress(dateField);
+  });
+});
+
+describe('Check onChange functionality on form fields', () => {
+  test('check onChange on memberName', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const memberNameField = screen.getByLabelText(
+      'Member Name (Last, First, MI, Suffix)',
+    ) as HTMLInputElement;
+    fireEvent.change(memberNameField, { target: { value: 'test' } });
+  });
+
+  test('check onChange on city', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const cityField = screen.getByLabelText('City') as HTMLInputElement;
+    fireEvent.change(cityField, { target: { value: 'new york' } });
+  });
+
+  test('check onChange on date with length 3', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const dateField = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField, { target: { value: '03/' } });
+
+    const dateField2 = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField2, { target: { value: '030' } });
+  });
+
+  test('check onChange on date with length 6', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const dateField = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField, { target: { value: '03/09/' } });
+
+    const dateField2 = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField2, { target: { value: '03/1995/' } });
+
+    const dateField3 = screen.getByLabelText(
+      'Date of Birth (MM/DD/YYYY)',
+    ) as HTMLInputElement;
+    fireEvent.change(dateField3, { target: { value: '03/199' } });
+  });
+
+  // test('check onChange on radio button (Gender)', () => {
+  //     render(<PolicyHolderInformation
+  //         errorHandling={errorHandling}
+  //         nextButtonClicked
+  //         footerToBottom={footerToBottom}
+  //         profileResponseData={profileResponseData}
+  //         planDetailsResponseData={planDetailsResponseData}
+  //     />);
+  //   const gender = screen.getByLabelText('MALE') as HTMLInputElement;
+  //   console.log("gender", prettyDOM(gender));
+  //   // fireEvent.change(gender)
+  //   expect(gender).not.toBeChecked()
+  //   fireEvent.click(gender);
+  //   expect(gender).toBeChecked()
+  // })
+});
+
