@@ -1,0 +1,9 @@
+import * as assetConfig from '@leagueplatform/asset-config'; // Import the module containing useStaticAsset
+
+// Mock the useStaticAsset function
+vi.mock('@leagueplatform/asset-config', () => ({
+  useStaticAsset: vi.fn(),
+}));
+
+ const mockAddIcon = 'mock-add-icon-path';
+    assetConfig.useStaticAsset.mockReturnValue(mockAddIcon);
