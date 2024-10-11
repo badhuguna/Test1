@@ -1,0 +1,10 @@
+  const mockSessionStorageData = JSON.stringify({
+    isPolicyHolderPatient: true,
+    patientRelationship: 'Self',
+    patientName: 'John Doe',
+    patientDateOfBirth: '1990-01-01',
+    dependents: [{ name: 'Dependent 1' }, { name: 'Dependent 2' }],
+  });
+
+  // Mock the sessionStorage getItem method
+  jest.spyOn(window.sessionStorage, 'getItem').mockReturnValue(mockSessionStorageData);
