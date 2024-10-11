@@ -1,0 +1,123 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
+import { ServiceInformation } from './ServiceInformation';
+import { ServiceDetailsInformation } from './service-details-information.component';
+
+// Mock the necessary props for ServiceInformation
+const mockServiceInformationProps = {
+  errorHandling: vi.fn(),
+  nextButtonClicked: false,
+  isValidateForm: vi.fn(),
+  footerToBottom: vi.fn(),
+  setIsAttaachmentLoading: vi.fn(),
+};
+
+// Mock the necessary props for ServiceDetailsInformation
+const mockServiceDetailsProps = {
+  serviceDetails: {
+    serviceType: '',
+    dateOfService: '',
+    expenseIncurred: '',
+    attachments: [],
+  },
+  errorDetails: {
+    serviceType: false,
+    dateOfService: '',
+    expenseIncurred: false,
+    attachments: false,
+  },
+  index: 0,
+  updateService: vi.fn(),
+  updateError: vi.fn(),
+  updateTotalExpenses: vi.fn(),
+  setIsAttaachmentLoading: vi.fn(),
+};
+
+describe('ServiceInformation Component', () => {
+  beforeEach(() => {
+    render(<ServiceInformation {...mockServiceInformationProps} />);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('renders without crashing and displays the correct heading', () => {
+    expect(screen.getByText(/Direct Reimbursement Claim Form/i)).toBeInTheDocument();
+    expect(screen.getByText(/Step 3: Service Information/i)).toBeInTheDocument();
+  });
+
+  test('adds a service when "Add Another Service" button is clicked', () => {
+    const addServiceButton = screen.getByRole('button', { name: /Add Another Service/i });
+    fireEvent.click(addServiceButton);
+    
+    expect(screen.getAllByText(/Service/i)).toHaveLength(2); // Check for 2 services
+  });
+
+  test('removes a service when RemoveServiceWarningModal is confirmed', () => {
+    const addServiceButton = screen.getByRole('button', { name: /Add Another Service/i });
+    fireEvent.click(addServiceButton); // Add another service
+
+    const removeServiceButton = screen.getByRole('button', { name: /Remove/i });
+    fireEvent.click(removeServiceButton);
+
+    expect(screen.getAllByText(/Service/i)).toHaveLength(1); // Check for 1 service
+  });
+
+  test('updates total expenses correctly', () => {
+    const expenseInput = screen.getByRole('textbox', { name: /Expense/i });
+    fireEvent.change(expenseInput, { target: { value: '100' } });
+
+    const totalExpensesField = screen.getByLabelText(/Total Expenses/i);
+    expect(totalExpensesField).toHaveValue('$100.00');
+  });
+});
+
+describe('ServiceDetailsInformation Component', () => {
+  beforeEach(() => {
+    render(<ServiceDetailsInformation {...mockServiceDetailsProps} />);
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('renders service details form fields correctly', () => {
+    expect(screen.getByLabelText(/Service Type/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Date of Service/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Expense Incurred/i)).toBeInTheDocument();
+    expect(screen.getByText(/Attach Itemized Bill or Receipt/i)).toBeInTheDocument();
+  });
+
+  test('updates the service type correctly', () => {
+    const serviceTypeSelect = screen.getByLabelText(/Service Type/i);
+    fireEvent.change(serviceTypeSelect, { target: { value: 'New Service' } });
+
+    expect(mockServiceDetailsProps.updateService).toHaveBeenCalledWith(
+      expect.objectContaining({ serviceType: 'New Service' }),
+      mockServiceDetailsProps.index
+    );
+  });
+
+  test('validates required fields on blur', () => {
+    const expenseInput = screen.getByLabelText(/Expense Incurred/i);
+    fireEvent.blur(expenseInput); // Trigger blur event
+
+    expect(screen.getByText(/Expense incurred is required./i)).toBeInTheDocument();
+  });
+
+  test('updates attachments and validates them', () => {
+    const attachmentsComponent = screen.getByText(/Attach Itemized Bill or Receipt/i);
+    fireEvent.change(attachmentsComponent, { target: { files: ['file.pdf'] } });
+
+    expect(mockServiceDetailsProps.updateService).toHaveBeenCalledWith(
+      expect.objectContaining({ attachments: ['file.pdf'] }),
+      mockServiceDetailsProps.index
+    );
+    expect(mockServiceDetailsProps.updateError).toHaveBeenCalledWith(
+      expect.objectContaining({ attachments: false }),
+      mockServiceDetailsProps.index
+    );
+  });
+});
