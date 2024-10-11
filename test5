@@ -1,0 +1,12 @@
+ const mockFormData = JSON.stringify({
+      services: [{ id: 1, name: 'Test Service' }],
+      totalExpenses: '$100.00',
+      errors: [
+        {
+          serviceType: false,
+          dateOfService: '',
+          expenseIncurred: false,
+          attachments: false,
+        },
+      ],
+    });
