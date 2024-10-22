@@ -1,0 +1,17 @@
+      <Modal.Trigger>
+        <Button
+          priority="tertiary"
+          quiet
+          size="small"
+          icon="statusInformationCircle"
+          hideLabel
+          css={{
+            padding: '$none',
+            marginLeft: '$half',
+            position: 'relative',
+            top: '3px',
+          }}
+        >
+          {formatMessage({ id: 'INFO_TOOLTIP' })}
+        </Button>
+      </Modal.Trigger>
