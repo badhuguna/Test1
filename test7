@@ -1,4 +1,157 @@
-      <Modal.Trigger>
+     /* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-shadow */
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  Box,
+  GDSStyleObject,
+  Modal,
+  Button,
+  HeadingText,
+  ParagraphText,
+  UtilityText,
+} from '@leagueplatform/genesis-core';
+import { getLoginBrowser } from '../../utils/helper';
+import { useStaticAsset } from '@leagueplatform/asset-config';
+import * as CONSTANTS from '../../utils/constant';
+import {
+  PRIMARY_CARE_LIBRARY_ASSET_KEYS
+} from '../../types/pcp-library.types';
+import { pcpLibrary } from '../../pcp-library.config';
+
+
+
+
+export function PrimaryCareProviderLibraryComponent(props: any) {
+  const { hideButton, showModal, setShowModal } = props;
+  const config = pcpLibrary.getConfig();
+  
+
+  const backGrayIcon = useStaticAsset(
+    PRIMARY_CARE_LIBRARY_ASSET_KEYS.BACK_GRAY_ICON,
+  );
+  const handleBackButtonClick = () => {
+    
+      if (setShowModal !== undefined) setShowModal(false);
+  };
+return (
+    <Box>
+      <Modal.Root
+        open={showModal}
+        onOpenChange={() => {
+          setShowModal(!showModal);
+        }}
+      >
+         
+        
+      
+        <Modal.Content
+          showCloseButton={false}
+          padding={{
+            '@initial': '30px 150px',
+            '@laptop': '30px 100px',
+            '@tablet': '30px 30px',
+            '@mobile': '0',
+            '@mobileLandscape': '30px',
+          }}
+          css={
+            {
+              borderRadius: '12px',
+              background: '#fff',
+              height: 'auto',
+              overflowY: 'auto',
+              '.genesis.css-3z5yjv': {
+                position: 'relative !important',
+              },
+            } as GDSStyleObject
+          }
+          width={{ '@initial': '65%', '@laptop': '80%', '@mobile': '100%' }}
+          onInteractOutside={(e: any) => e.preventDefault()}
+        >
+          <Box
+            css={{
+              height: 'auto',
+              minHeight: '500px',
+              padding: '$two $three',
+              '@mobile': {
+                maxWidth: '100vw',
+                width: '100%',
+                height: '100vh',
+                overflow: 'auto !important',
+                paddingTop: ['Safari'].includes(getLoginBrowser())
+                  ? '70px'
+                  : '32px',
+                '.GDS-c-biBNXN': {
+                  height: 'auto !important',
+                },
+              },
+            }}
+          >
+            <Button
+              size="small"
+              icon={backGrayIcon as string}
+              onClick={handleBackButtonClick}
+              css={{
+                '.GDS-c-PJLV': {
+                  fontSize: '$headingThree',
+                  '@tablet': {
+                    fontSize: '$headingFour',
+                  },
+                  '@mobile': {
+                    fontSize: '$headingFour',
+                  },
+                  fontWeight: 700,
+                },
+                '.GDS-c-UazGY': {
+                  paddingRight: '25px',
+                  marginLeft: '-40px',
+                  '@mobile': {
+                    paddingRight: '10px',
+                    marginLeft: '-5px',
+                  },
+                },
+                background: 'none',
+                color: '#66717A',
+                padding: '0px',
+                outline: 'none !important',
+                '&:hover,&:active,&:focus': {
+                  background: 'none',
+                },
+                letterSpacing: 0.25,
+                marginBottom: '20px',
+                '@mobile': {
+                  marginBottom: '10px',
+                },
+              }}
+              data-testid="back-btn"
+            >
+              {CONSTANTS.BACK_TITLE}
+            </Button>
+                <HeadingText
+                  level="display"
+                  size="sm"
+                  css={
+                    {
+                      fontSize: '$headingOne',
+                      '@tablet': {
+                        fontSize: '$headingTwo',
+                      },
+                      '@mobile': {
+                        fontSize: '$headingThree',
+                      },
+                      '@mobileLandscape': {
+                        fontSize: '$headingTwo',
+                      },
+                      padding: '20px 0px',
+                      color: '#2C3135',
+                      letterSpacing: '0.25px',
+                    } as GDSStyleObject
+                  }
+                  data-testid="title"
+                >
+                  {CONSTANTS.PRIMARY_CARE_PROVIDER}
+          
         <Button
           priority="tertiary"
           quiet
@@ -12,6 +165,360 @@
             top: '3px',
           }}
         >
-          {formatMessage({ id: 'INFO_TOOLTIP' })}
+          {CONSTANTS.PRIMARY_CARE_PROVIDER}
         </Button>
-      </Modal.Trigger>
+                </HeadingText>
+                <Modal.Description>
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '$bodyOne',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    data-testid="test-description"
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_TITLE}
+                <Button
+          priority="tertiary"
+          quiet
+          size="small"
+          icon="statusInformationCircle"
+          hideLabel
+          css={{
+            padding: '$none',
+            marginLeft: '$half',
+            position: 'relative',
+            top: '3px',
+          }}
+        >
+          {CONSTANTS.PRIMARY_CARE_PROVIDER}
+        </Button>
+                  </HeadingText>
+                  
+                </Modal.Description>
+                
+                  
+                  <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_BODY}
+                </HeadingText>
+                 <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '20px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT}
+                </HeadingText>
+                <Modal.Description>
+                  
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT_CONTENT}
+                </HeadingText>
+                </Modal.Description>
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '$bodyOne',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    data-testid="test-description"
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT1}
+                 </HeadingText>
+                 <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        margin: '0 0 0 0',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT1_GROUP1}
+                
+                </HeadingText>
+                  
+                  <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '$bodyOne',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    data-testid="test-description"
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT2}
+                  </HeadingText>
+                  <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        margin: '0 0 0 0',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT1_GROUP1}
+                
+                </HeadingText>
+                  
+                  <ParagraphText
+                    css={
+                      {
+                        fontSize: '$bodyOne',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    data-testid="test-description"
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT3}
+                 </ParagraphText>
+                 <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        margin: '0 0 0 0',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT2_GROUP2}
+                <Button
+          priority="tertiary"
+          quiet
+          size="small"
+          icon="statusInformationCircle"
+          hideLabel
+          css={{
+            padding: '$none',
+            marginLeft: '$half',
+            position: 'relative',
+            top: '3px',
+          }}
+        >
+          {CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT2_GROUP2}
+        </Button>
+                </HeadingText>
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '20px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: '#2C3135',
+                        fontWeight:'600',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_TITLE}
+                </HeadingText>
+                <UtilityText>
+                <ol
+              style={{
+                lineHeight: '23px',
+                listStyle: 'none',
+                
+              
+              }}
+            > <li>
+      
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                1. <span style ={{
+                fontWeight: 'bold',
+                color: '#0074C9',
+            }}>
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY1}</span>
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY2} 
+                </HeadingText>
+                
+                </li>
+                <li>
+      
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+          2. <span style ={{
+                fontWeight: 'bold',
+            }}>
+    {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY3}</span>
+    <span style ={{
+                paddingLeft :'5px'
+            }}>
+    {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY4}</span>
+                </HeadingText>
+                </li>
+               </ol>
+               </UtilityText>
+                <HeadingText
+                  level="display"
+                  size="sm"
+                    css={
+                      {
+                        fontSize: '16px',
+                        lineHeight: '40px',
+                        letterSpacing: '0.25',
+                        color: 'rgba(0, 0, 0, 0.80)',
+                        fontWeight:'400',
+                        '@mobile': {
+                          lineHeight: '24px',
+                        },
+                      } as GDSStyleObject
+                    }
+                    
+                  >
+                    <span style ={{
+                fontWeight: 'bold',
+                
+                
+            }}>
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT1}</span>
+                {CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT2}
+                </HeadingText>
+                
+                
+                  
+          </Box>
+        </Modal.Content>
+      </Modal.Root>
+    </Box>
+  );
+}
+
