@@ -1,0 +1,49 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { PrimaryCareProviderLibraryComponent } from './PrimaryCareProviderLibraryComponent';
+import * as CONSTANTS from '../../utils/constant';
+
+// Mocking the useStaticAsset function
+jest.mock('@leagueplatform/asset-config', () => ({
+  useStaticAsset: jest.fn(() => 'mock-back-gray-icon'),
+}));
+
+describe('PrimaryCareProviderLibraryComponent', () => {
+  const mockSetShowModal = jest.fn();
+
+  beforeEach(() => {
+    render(
+      <PrimaryCareProviderLibraryComponent
+        hideButton={false}
+        showModal={true}
+        setShowModal={mockSetShowModal}
+      />
+    );
+  });
+
+  it('renders the component correctly', () => {
+    expect(screen.getByTestId('title')).toBeInTheDocument();
+    expect(screen.getByTestId('test-description')).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.BACK_TITLE)).toBeInTheDocument();
+  });
+
+  it('handles back button click', () => {
+    const backButton = screen.getByTestId('back-btn');
+    fireEvent.click(backButton);
+    expect(mockSetShowModal).toHaveBeenCalledWith(false);
+  });
+
+  it('displays the correct titles and descriptions', () => {
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER)).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_TITLE)).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_BODY)).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT)).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT_CONTENT)).toBeInTheDocument();
+  });
+
+  it('renders the ordered list correctly', () => {
+    expect(screen.getByText('1.')).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY1)).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_CONTENT_BODY3)).toBeInTheDocument();
+  });
+});
