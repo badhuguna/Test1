@@ -1,0 +1,84 @@
+import React from 'react';
+import {
+  Box,
+  Button,
+  HeadingText,
+  Modal,
+  ParagraphText,
+} from '@leagueplatform/genesis-core';
+
+
+export const InfoModalPopover = ({
+  infoModalType,
+}: {
+  infoModalType: INFO_MODAL_TYPES;
+}) => {
+  
+  return (
+    <Modal.Root>
+      <Modal.Trigger>
+        <Button
+          priority="tertiary"
+          quiet
+          size="small"
+          icon="statusInformationCircle"
+          hideLabel
+          css={{
+            padding: '$none',
+            marginLeft: '$half',
+            position: 'relative',
+            top: '3px',
+          }}
+        >
+       Test
+        </Button>
+      </Modal.Trigger>
+      {/* The CSS is needed to ensure this modal and overlay are higher in the z-index than any already open modals */}
+      <Modal.Content
+        css={{
+          '.GDS-modal': { width: '381px', height: '591px', zIndex: '$toast' },
+          '.GDS-modal-overlay': { zIndex: '$toast' },
+        }}
+      >
+        <Modal.Title>
+         Ttile
+        </Modal.Title>
+        <Box css={{ maxHeight: '430px', overflowY: 'auto' }} tabIndex={0}>
+          <HeadingText
+            level="1"
+            size="xl"
+            css={{ paddingBottom: '$oneAndHalf' }}
+          >
+           Heading
+          </HeadingText>
+          <ParagraphText
+            size="sm"
+            css={{
+              whiteSpace: 'pre-wrap',
+              paddingBottom: '$one',
+            }}
+          >
+          Testdff
+          </ParagraphText>
+        </Box>
+        <Modal.Close>
+          <Button
+            priority="primary"
+            size="large"
+            textAlign="center"
+            css={{
+              position: 'absolute',
+              bottom: '$one',
+              left: '$one',
+              marginTop: '$one',
+              width: '349px',
+              span: { width: '100%' },
+            }}
+          >
+           CLOSE
+          </Button>
+        </Modal.Close>
+      </Modal.Content>
+    </Modal.Root>
+  );
+};
