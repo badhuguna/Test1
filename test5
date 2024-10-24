@@ -1,12 +1,48 @@
- const mockFormData = JSON.stringify({
-      services: [{ id: 1, name: 'Test Service' }],
-      totalExpenses: '$100.00',
-      errors: [
-        {
-          serviceType: false,
-          dateOfService: '',
-          expenseIncurred: false,
-          attachments: false,
-        },
-      ],
-    });
+import React from 'react';
+import { fireEvent, render, screen } from '@leagueplatform/test-util';
+import { expect, vi } from 'vitest';
+import { PrimaryCareProviderLibraryComponent } from '../../components/primary-care-provider/pcp-library.component';
+import * as CONSTANTS from '../../utils/constant';
+
+// Mocking the useStaticAsset function
+jest.mock('@leagueplatform/asset-config', () => ({
+  useStaticAsset: vi.fn(() => 'mock-back-gray-icon'),
+}));
+
+describe('PrimaryCareProviderLibraryComponent', () => {
+  const mockSetShowModal = vi.fn();
+
+    render(
+      <PrimaryCareProviderLibraryComponent
+        showModal={true}
+      />,
+    );
+
+
+  it('renders the component correctly', () => {
+    expect(screen.getByTestId('title')).toBeInTheDocument();
+    expect(screen.getByText(CONSTANTS.BACK_TITLE)).toBeInTheDocument();
+  });
+
+  it('handles back button click', () => {
+    const backButton = screen.getByTestId('back-btn');
+    fireEvent.click(backButton);
+    expect(mockSetShowModal).toHaveBeenCalledWith(false);
+  });
+
+  it('displays the correct titles and descriptions', () => {
+    expect(
+      screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_TITLE),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_BODY),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT_CONTENT),
+    ).toBeInTheDocument();
+  });
+});
+
