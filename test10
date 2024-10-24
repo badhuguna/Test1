@@ -1,0 +1,39 @@
+import React from 'react';
+import { render, screen } from '@leagueplatform/test-util';
+import { expect, vi } from 'vitest';
+import { PrimaryCareProviderLibraryComponent } from '../../components/primary-care-provider/pcp-library.component';
+import * as CONSTANTS from '../../utils/constant';
+
+// Mocking the useStaticAsset function
+vi.mock('@leagueplatform/asset-config', () => ({
+  useStaticAsset: vi.fn(() => 'mock-back-gray-icon'),
+}));
+
+
+
+describe('Check wheather back button in the document', () => {
+    test('check whether back button in the document', () => {
+      render(<PrimaryCareProviderLibraryComponent showModal />);
+      const data = screen.getByText(CONSTANTS.BACK_TITLE);
+      expect(data).toBeInTheDocument();
+    });
+  });
+
+  describe('displays the correct titles and descriptions', () => {
+    test('displays the correct titles and descriptions', () => {
+      render(<PrimaryCareProviderLibraryComponent showModal />);
+      expect(
+        screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_TITLE),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_BODY),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(CONSTANTS.PRIMARY_CARE_PROVIDER_DEPENDENT_CONTENT),
+      ).toBeInTheDocument();
+    });
+  });
+  
