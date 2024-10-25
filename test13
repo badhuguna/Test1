@@ -1,0 +1,31 @@
+import { useStaticAsset } from '@leagueplatform/asset-config';
+
+// Mock useStaticAsset from @leagueplatform/asset-config
+vi.mock('@leagueplatform/asset-config', () => ({
+  useStaticAsset: vi.fn(() => 'mocked-add-icon-url'),
+}));
+
+describe('ServiceInformation Component', () => {
+  const defaultProps = {
+    errorHandling: vi.fn(),
+    nextButtonClicked: false,
+    isValidateForm: vi.fn(),
+    footerToBottom: vi.fn(),
+    setIsAttaachmentLoading: vi.fn(),
+  };
+
+  beforeEach(() => {
+    // Reset any state or mock data if needed before each test
+    vi.clearAllMocks();
+  });
+
+  it('renders component with initial fields', () => {
+    render(<ServiceInformation {...defaultProps} />);
+    
+    expect(screen.getByText('Direct Reimbursement Claim Form')).toBeInTheDocument();
+    expect(screen.getByText('Step 3: Service Information')).toBeInTheDocument();
+    expect(screen.getByLabelText('Total Expenses')).toHaveValue('$0.00');
+    expect(useStaticAsset).toHaveBeenCalledWith(expect.anything());
+  });
+
+}); 
