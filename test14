@@ -1,0 +1,47 @@
+it('should add a service when "Add Another Service" button is clicked', () => {
+    render(<ServiceInformation {...defaultProps} />);
+
+    // Click the "Add Another Service" button
+    fireEvent.click(screen.getByText('Add Another Service'));
+
+    // Verify that another service is added by checking the presence of the new label
+    expect(screen.getAllByText(/Service \d+/)).toHaveLength(2);
+  });
+
+  it('should remove a service when "Remove" button is clicked', () => {
+    render(<ServiceInformation {...defaultProps} />);
+
+    // Add two services to be able to test removal
+    fireEvent.click(screen.getByText('Add Another Service'));
+    fireEvent.click(screen.getByText('Add Another Service'));
+
+    // Remove the second service
+    const removeButtons = screen.getAllByRole('button', { name: /remove/i });
+    fireEvent.click(removeButtons[0]);
+
+    // Assert that only one service remains
+    expect(screen.getAllByText(/Service \d+/)).toHaveLength(2);  // One remaining + Total Expenses
+  });
+
+  it('should update error state when nextButtonClicked is true and form is invalid', () => {
+    render(<ServiceInformation {...defaultProps} nextButtonClicked={true} />);
+
+    // Update the form state to be invalid
+    fireEvent.click(screen.getByText('Add Another Service'));
+    fireEvent.click(screen.getByText('Add Another Service'));
+
+    // Check that error handling has been triggered
+    expect(defaultProps.errorHandling).toHaveBeenCalledWith(false);
+  });
+
+  it('should disable the "Add Another Service" button after 10 services', () => {
+    render(<ServiceInformation {...defaultProps} />);
+
+    // Click to add services until limit is reached
+    for (let i = 0; i < 9; i++) {
+      fireEvent.click(screen.getByText('Add Another Service'));
+    }
+
+    // Check that "Add Another Service" button is no longer present
+    expect(screen.queryByText('Add Another Service')).not.toBeInTheDocument();
+  });
