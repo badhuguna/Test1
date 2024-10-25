@@ -1,0 +1,76 @@
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { AcknowledgementInformation } from './AcknowledgementInformation';
+
+describe('AcknowledgementInformation Component', () => {
+  const footerToBottom = vi.fn();
+  const errorHandling = vi.fn();
+
+  it('should render the component with the checkbox and headings', () => {
+    render(
+      <AcknowledgementInformation
+        errorHandling={errorHandling}
+        nextButtonClicked={false}
+        footerToBottom={footerToBottom}
+      />
+    );
+
+    // Check if main heading and subheading are rendered
+    expect(screen.getByText(/Direct Reimbursement Claim Form/i)).toBeInTheDocument();
+    expect(screen.getByText(/Step 5: Acknowledgement\/Certification/i)).toBeInTheDocument();
+
+    // Check for the checkbox
+    const checkbox = screen.getByRole('checkbox', { name: '' });
+    expect(checkbox).toBeInTheDocument();
+  });
+
+  it('should update state when checkbox is checked', () => {
+    render(
+      <AcknowledgementInformation
+        errorHandling={errorHandling}
+        nextButtonClicked={false}
+        footerToBottom={footerToBottom}
+      />
+    );
+
+    const checkbox = screen.getByRole('checkbox', { name: '' });
+    
+    // Initially, the checkbox should be unchecked
+    expect(checkbox).not.toBeChecked();
+
+    // Simulate checking the checkbox
+    fireEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(errorHandling).toHaveBeenCalledWith(true);
+
+    // Simulate unchecking the checkbox
+    fireEvent.click(checkbox);
+    expect(checkbox).not.toBeChecked();
+    expect(errorHandling).toHaveBeenCalledWith(false);
+  });
+
+  it('should display error message if checkbox is not checked and next button is clicked', () => {
+    render(
+      <AcknowledgementInformation
+        errorHandling={errorHandling}
+        nextButtonClicked={true}
+        footerToBottom={footerToBottom}
+      />
+    );
+
+    // Error message should not appear initially
+    expect(screen.queryByText(/This selection is required./)).not.toBeInTheDocument();
+
+    // Render with `nextButtonClicked` as true to simulate form submission
+    render(
+      <AcknowledgementInformation
+        errorHandling={errorHandling}
+        nextButtonClicked={true}
+        footerToBottom={footerToBottom}
+      />
+    );
+
+    // Error message should appear if checkbox is not checked
+    expect(screen.getByText(/This selection is required./)).toBeInTheDocument();
+  });
+});
