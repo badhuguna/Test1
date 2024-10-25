@@ -1,0 +1,6 @@
+
+
+  vi.mock('@leagueplatform/asset-config', () => ({
+    ...vi.importActual('@leagueplatform/asset-config'),
+    useStaticAsset: vi.fn(() => 'mocked-asset-url'),
+  }));
