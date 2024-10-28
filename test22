@@ -1,0 +1,8 @@
+ const attachmentComponent = screen.getByText('Attach Itemized Bill or Receipt');
+
+  // Trigger onUpdate with an empty array (no files)
+  fireEvent.change(attachmentComponent, { target: { files: [] } });
+
+  // Check if error message is displayed
+  const errorMessage = screen.getByText('Attachment is required.');
+  expect(errorMessage).toBeInTheDocument();
