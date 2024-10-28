@@ -1,31 +1,108 @@
-import { useStaticAsset } from '@leagueplatform/asset-config';
+import React from 'react';
+import { render, screen } from '@leagueplatform/test-util';
+import { expect, vi } from 'vitest';
+import { PatientInformation } from '../../components/forms/forms-type/directreimbursement/pages/patient-information.component';
+import { profileResponseData } from '../../mockData';
 
-// Mock useStaticAsset from @leagueplatform/asset-config
-vi.mock('@leagueplatform/asset-config', () => ({
-  useStaticAsset: vi.fn(() => 'mocked-add-icon-url'),
-}));
+const footerToBottom = () => {};
+const errorHandling = () => {};
 
-describe('ServiceInformation Component', () => {
-  const defaultProps = {
-    errorHandling: vi.fn(),
-    nextButtonClicked: false,
-    isValidateForm: vi.fn(),
-    footerToBottom: vi.fn(),
-    setIsAttaachmentLoading: vi.fn(),
-  };
+describe('Checking Form Patient Information', () => {
+  test('Chceking Heading of Form Patient Information', () => {
+    const mockSessionStorageData = JSON.stringify({
+      isPolicyHolderPatient: 'YES',
+      patientRelationship: 'Self',
+      patientName: 'John Doe',
+      patientDateOfBirth: '1990-01-01',
+      dependents: [{ name: 'Dependent 1' }, { name: 'Dependent 2' }],
+    });
 
-  beforeEach(() => {
-    // Reset any state or mock data if needed before each test
-    vi.clearAllMocks();
+    // Mock the sessionStorage getItem method
+    vi.spyOn(window.sessionStorage, 'getItem').mockReturnValue(
+      mockSessionStorageData,
+    );
+    render(
+      <PatientInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        isValidateForm
+      />,
+    );
+    const heading = screen.queryByText('Step 2: Patient Information');
+    expect(heading).toBeInTheDocument();
   });
+  test('Chceking Heading of Form policy holder the patient', () => {
+    const mockSessionStorageData = JSON.stringify({
+      isPolicyHolderPatient: 'NO',
+      patientRelationship: 'Self',
+      patientName: 'John Doe',
+      patientDateOfBirth: '1990-01-01',
+      dependents: [
+        {
+          firstName: 'KATHLEEN',
+          lastName: 'RICHARD',
+          gender: 'F',
+          dateOfBirth: '1972-01-01',
+          pin: '029',
+          relationship: 'Spouse',
+          ecId: '799990109',
+        },
+        {
+          firstName: 'KIMBERLY',
+          lastName: 'RICHARD',
+          gender: 'F',
+          dateOfBirth: '2008-11-06',
+          pin: '032',
+          relationship: 'Dependent',
+          ecId: '799990112',
+        },
+        {
+          firstName: 'KENNETH',
+          lastName: 'RICHARD',
+          gender: 'M',
+          dateOfBirth: '2012-01-01',
+          pin: '033',
+          relationship: 'Dependent',
+          ecId: '799990113',
+        },
+        {
+          firstName: 'KATHERINA',
+          lastName: 'RICHARD',
+          gender: 'F',
+          dateOfBirth: '2000-01-01',
+          pin: '030',
+          relationship: 'Dependent',
+          ecId: '799990110',
+        },
+        {
+          firstName: 'KORY',
+          lastName: 'RICHARD',
+          gender: 'M',
+          dateOfBirth: '2004-10-06',
+          pin: '031',
+          relationship: 'Dependent',
+          ecId: '799990111',
+        },
+      ],
+    });
 
-  it('renders component with initial fields', () => {
-    render(<ServiceInformation {...defaultProps} />);
-    
-    expect(screen.getByText('Direct Reimbursement Claim Form')).toBeInTheDocument();
-    expect(screen.getByText('Step 3: Service Information')).toBeInTheDocument();
-    expect(screen.getByLabelText('Total Expenses')).toHaveValue('$0.00');
-    expect(useStaticAsset).toHaveBeenCalledWith(expect.anything());
+    // Mock the sessionStorage getItem method
+    vi.spyOn(window.sessionStorage, 'getItem').mockReturnValue(
+      mockSessionStorageData,
+    );
+    render(
+      <PatientInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        isValidateForm
+      />,
+    );
+    const heading = screen.queryByText('Step 2: Patient Information');
+    expect(heading).toBeInTheDocument();
   });
+});
 
-}); 
