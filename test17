@@ -1,0 +1,41 @@
+  test('should check phone No for examiner', () => {
+    render(
+      <ExaminerDispenserInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        isValidateForm={isValidateForm}
+        footerToBottom={footerToBottom}
+      />,
+    );
+    const examinerPhoneInput = screen.getByLabelText(
+      'Phone Number)',
+    ) as HTMLInputElement;
+
+    fireEvent.change(examinerPhoneInput, { target: { value: '' } }); // Empty name triggers error
+    fireEvent.keyUp(examinerPhoneInput);
+    const phoneError = screen.getByText(
+        "Examiner's phone number is required.",
+      );
+      expect(phoneError).toBeInTheDocument();
+    });
+
+    test('should check phone No valid for examiner', () => {
+        render(
+          <ExaminerDispenserInformation
+            errorHandling={errorHandling}
+            nextButtonClicked
+            isValidateForm={isValidateForm}
+            footerToBottom={footerToBottom}
+          />,
+        );
+        const examinerPhoneInput = screen.getByLabelText(
+          'Phone Number)',
+        ) as HTMLInputElement;
+    
+        fireEvent.change(examinerPhoneInput, { target: { value: '4343' } }); // Empty name triggers error
+        fireEvent.keyUp(examinerPhoneInput);
+        const phoneError = screen.getByText(
+            "Enter a valid phone number.",
+          );
+          expect(phoneError).toBeInTheDocument();
+        });
