@@ -1,0 +1,4 @@
+ expect(screen.getByLabelText(/Service Type/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Date of Service/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Expense Incurred/i)).toBeInTheDocument();
+    expect(screen.getByText(/Attach Itemized Bill or Receipt/i)).toBeInTheDocument();
