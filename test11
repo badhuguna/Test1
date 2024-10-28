@@ -1,3 +1,349 @@
-vi.mock('@leagueplatform/asset-config', () => ({
-  useStaticAsset: vi.fn(() => 'mocked-asset-url'),
-}));
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  GDSStyleObject,
+  FormField,
+  TextInput,
+  Select,
+  StackLayout,
+  Icon,
+} from '@leagueplatform/genesis-core';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { CalendarView } from '@leagueplatform/web-common-components';
+import { useStaticAsset } from '@leagueplatform/asset-config';
+import { SERVICE_TYPE_VALUE } from '../../../../../types/online-forms.types';
+import { AttachmentReusableComponent } from '../../../../reusable-components/attachment.component';
+import { isDecimal, isEmpty, isValidDate } from '../../../helpers';
+import { FORMS_LIBRARY_ASSET_KEYS } from '../../../../../types/forms-library.types';
+
+export function ServiceDetailsInformation(props: any) {
+  const {
+    serviceDetails,
+    errorDetails,
+    index,
+    updateService,
+    updateError,
+    updateTotalExpenses,
+    setIsAttaachmentLoading,
+  } = props;
+
+  const [form, setForm] = useState({
+    serviceType: '',
+    dateOfService: '',
+    expenseIncurred: '',
+    expenseValue: 0,
+    attachments: [],
+  });
+
+  const [errors, setErrors] = useState({
+    serviceType: false,
+    dateOfService: '',
+    expenseIncurred: false,
+    attachments: false,
+  });
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
+
+  const calendarIcon = useStaticAsset(FORMS_LIBRARY_ASSET_KEYS.CALENDAR_ICON);
+
+  useEffect(() => {
+    setIsCalendarVisible(false);
+  }, []);
+
+  useEffect(() => {
+    const calendarEle = document.getElementById('calendarDate');
+    if (calendarEle) {
+      calendarEle.style.width = 'auto';
+    }
+  }, [isCalendarVisible]);
+
+  useEffect(() => {
+    const nextFormState = { ...serviceDetails };
+    setForm(nextFormState);
+  }, [serviceDetails]);
+
+  useEffect(() => {
+    const nextErrorState = { ...errorDetails };
+    setErrors(nextErrorState);
+  }, [errorDetails]);
+
+  const updateErrorState = (value: any, id: string) => {
+    if (id === 'attachments') {
+      const nextErrorState = {
+        ...errors,
+        [id]: value.length === 0,
+      };
+      setErrors(nextErrorState);
+      updateError(nextErrorState, index);
+    } else if (id === 'dateOfService') {
+      if (isEmpty(value)) {
+        const nextErrorState = {
+          ...errors,
+          [id]: 'error1',
+        };
+        setIsCalendarVisible(true);
+        setErrors(nextErrorState);
+        updateError(nextErrorState, index);
+      } else if (!isValidDate(value)) {
+        const nextErrorState = {
+          ...errors,
+          [id]: 'error2',
+        };
+        setIsCalendarVisible(true);
+        setErrors(nextErrorState);
+        updateError(nextErrorState, index);
+      } else {
+        const nextErrorState = {
+          ...errors,
+          [id]: '',
+        };
+        setIsCalendarVisible(false);
+        setErrors(nextErrorState);
+        updateError(nextErrorState, index);
+      }
+    } else {
+      const nextErrorState = {
+        ...errors,
+        [id]: isEmpty(value),
+      };
+      setErrors(nextErrorState);
+      updateError(nextErrorState, index);
+    }
+  };
+
+  const onUpdateField = (event: any) => {
+    const { value, id } = event.target;
+    if (id === 'expenseIncurred') {
+      const nextFormState = {
+        ...form,
+        [id]: isDecimal(value) ? `$${isDecimal(value)}` : '',
+        expenseValue: isDecimal(value) ? Number(isDecimal(value)) : 0,
+      };
+      setForm(nextFormState);
+      updateService(nextFormState, index);
+    } else {
+      const nextFormState = {
+        ...form,
+        [id]: value,
+      };
+      setForm(nextFormState);
+      updateService(nextFormState, index);
+    }
+    updateErrorState(value, id);
+  };
+
+  const attachmentsAdded = (attachmentsObj: any) => {
+    const nextFormState = {
+      ...form,
+      attachments: attachmentsObj,
+    };
+    setForm(nextFormState);
+    updateService(nextFormState, index);
+    updateErrorState(attachmentsObj, 'attachments');
+  };
+
+  const serviceTypeOption = (serviceData: any) => {
+    const serviceNameData = serviceData.map((service: any) => ({
+      value: service,
+      label: service,
+    }));
+    return serviceNameData;
+  };
+
+  const dateSelected = (e: any) => {
+    const day = e.day.toString().padStart(2, '0');
+    const month = e.month.toString().padStart(2, '0');
+    const datePicked = {
+      target: {
+        id: 'dateOfService',
+        value: `${month}/${day}/${e.year}`,
+      },
+    };
+    onUpdateField(datePicked);
+  };
+
+  const onBlurField = (event: any) => {
+    const { id, value } = event.target;
+    if (id === 'expenseIncurred') {
+      const currency = Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(form.expenseValue);
+      const nextFormState = {
+        ...form,
+        [id]: value === '' ? '' : currency,
+      };
+      setForm(nextFormState);
+      updateService(nextFormState, index);
+      updateTotalExpenses();
+      updateErrorState(event.target.value, event.target.id);
+    }
+    updateErrorState(event.target.value, event.target.id);
+  };
+
+  const onKeyPressField = (event: any) => {
+    updateErrorState(event.target.value, event.target.id);
+  };
+
+  return (
+    <StackLayout
+      css={
+        {
+          backgroundColor: 'White',
+          maxWidth: '100%',
+        } as GDSStyleObject
+      }
+    >
+      <Box
+        css={
+          {
+            display: 'flex',
+            flexDirection: 'column',
+            maxWidth: '100%',
+          } as GDSStyleObject
+        }
+      >
+        <Box
+          css={
+            {
+              padding: '$one $none',
+            } as GDSStyleObject
+          }
+        >
+          <FormField
+            id="serviceType"
+            label="Service Type"
+            inputStatus={errors.serviceType ? 'error' : undefined}
+            statusIconLabel={errors.serviceType ? 'Error' : ''}
+            statusMessage={
+              errors.serviceType ? 'Service type is required.' : ''
+            }
+          >
+            <Select
+              placeholder="Please Select"
+              options={serviceTypeOption(SERVICE_TYPE_VALUE)}
+              onChange={onUpdateField}
+              value={form.serviceType}
+              onBlur={onBlurField}
+              onKeyPress={onKeyPressField}
+            />
+          </FormField>
+        </Box>
+        <Box
+          css={
+            {
+              padding: '$one $none',
+            } as GDSStyleObject
+          }
+        >
+          <FormField
+            id="dateOfService"
+            label="Date of Service (MM/DD/YYYY)"
+            inputStatus={
+              errors.dateOfService === 'error1' ||
+              errors.dateOfService === 'error2'
+                ? 'error'
+                : undefined
+            }
+            statusIconLabel={
+              errors.dateOfService === 'error1' ||
+              errors.dateOfService === 'error2'
+                ? 'Error'
+                : ''
+            }
+            statusMessage={
+              // eslint-disable-next-line no-nested-ternary
+              errors.dateOfService === 'error1'
+                ? 'Date of service is required.'
+                : errors.dateOfService === 'error2'
+                ? 'Please select a valid date of service.'
+                : ''
+            }
+          >
+            <TextInput
+              trailingContent={
+                <Icon icon={calendarIcon as string} size="17px" />
+              }
+              value={form.dateOfService}
+              placeholder="MM/DD/YYYY"
+              onBlur={onBlurField}
+              onFocus={() => setIsCalendarVisible(true)}
+              onKeyPress={onKeyPressField}
+            />
+          </FormField>
+        </Box>
+        {isCalendarVisible && (
+          <Box
+            css={
+              {
+                padding: '$one $none',
+              } as GDSStyleObject
+            }
+          >
+            <FormField
+              id="calendarDate"
+              label="Date of Service (MM/DD/YYYY)"
+              css={{
+                maxWidth: '550px',
+              }}
+            >
+              <CalendarView
+                onChange={(e) => dateSelected(e)}
+                css={{
+                  width: 'fit-content',
+                }}
+              />
+            </FormField>
+          </Box>
+        )}
+        <Box
+          css={
+            {
+              padding: '$one $none',
+            } as GDSStyleObject
+          }
+        >
+          <FormField
+            id="expenseIncurred"
+            label="Expense Incurred"
+            inputStatus={errors.expenseIncurred ? 'error' : undefined}
+            statusIconLabel={errors.expenseIncurred ? 'Error' : ''}
+            statusMessage={
+              errors.expenseIncurred ? 'Expense incurred is required.' : ''
+            }
+          >
+            <TextInput
+              onChange={onUpdateField}
+              value={form.expenseIncurred}
+              onBlur={onBlurField}
+            />
+          </FormField>
+        </Box>
+        <Box
+          css={
+            {
+              padding: '$one $none',
+            } as GDSStyleObject
+          }
+        >
+          <FormField
+            id="attachments"
+            label=""
+            statusIconLabel="Error"
+            inputStatus={errors.attachments ? 'error' : undefined}
+            statusMessage={errors.attachments ? 'Attachment is required.' : ''}
+          >
+            <AttachmentReusableComponent
+              displayText="Attach Itemized Bill or Receipt"
+              acceptTypes={['.pdf', '.doc', '.png', '.gif', '.jpg']}
+              onUpdate={attachmentsAdded}
+              attachments={form.attachments}
+              serviceIndex={`vision-service-${index}`}
+              setIsAttaachmentLoading={setIsAttaachmentLoading}
+            />
+          </FormField>
+        </Box>
+      </Box>
+    </StackLayout>
+  );
+}
+
