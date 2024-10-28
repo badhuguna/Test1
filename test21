@@ -1,0 +1,1 @@
+ fireEvent.change(dateOfServiceInput, { target: { value: '13/40/2022' } });
