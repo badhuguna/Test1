@@ -1,6 +1,178 @@
+import React from 'react';
+import { fireEvent, render, screen } from '@leagueplatform/test-util';
+import { expect } from 'vitest';
+import { PolicyHolderInformation } from '../../components/forms/forms-type/directreimbursement/pages/policyholder-information.component';
+import {
+  profileResponseData,
+  planDetailsResponseData,
+  profileResponseDataDependentZero,
+  profileResponseDataDependentWithoutName,
+  planDetailsResponseDataZeroMember,
+  planDetailsResponseDataWithoutMember,
+  profileResponseDataRelDep,
+} from '../../mockData';
 
+const footerToBottom = () => {};
+const errorHandling = () => {};
 
-  vi.mock('@leagueplatform/asset-config', () => ({
-    ...vi.importActual('@leagueplatform/asset-config'),
-    useStaticAsset: vi.fn(() => 'mocked-asset-url'),
-  }));
+describe('Checking Form Instruction component data', () => {
+  test('Chceking Heading of Form Instruction component', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const heading = screen.queryByText('Direct Reimbursement Claim Form');
+    expect(heading).toBeInTheDocument();
+  });
+});
+
+describe('Checking Form Instruction component data', () => {
+  test('useEffect with zero members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseDataWithoutMember}
+      />,
+    );
+  });
+
+  test('useEffect with zero dependents and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentZero}
+        planDetailsResponseData={planDetailsResponseDataWithoutMember}
+      />,
+    );
+  });
+
+  test('useEffect with 1 dependents without required data and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentWithoutName}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+  });
+
+  test('useEffect with zero dependents and members', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataDependentZero}
+        planDetailsResponseData={planDetailsResponseDataZeroMember}
+      />,
+    );
+  });
+
+  test('useEffect with members but relation is dependent', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseDataRelDep}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+  });
+});
+
+describe('Check onblur and onkeyup functions', () => {
+  test('Zip Code validations covered onblur and keypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const inputField = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(inputField, { target: { value: '' } });
+    fireEvent.blur(inputField);
+    const errorMessage = screen.getByText('zip code is required.');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('Zip Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const zipCode = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(zipCode, { target: { value: '123' } });
+    fireEvent.keyPress(zipCode);
+    const errorMessage = screen.getByText('Please enter a valid zip code.');
+    expect(errorMessage).toBeInTheDocument();
+  });
+
+  test('valid Zip Code validations covered onkeypress', async () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const zipCode = screen.getByLabelText('Zip Code') as HTMLInputElement;
+    fireEvent.change(zipCode, { target: { value: '12345' } });
+    fireEvent.keyPress(zipCode);
+  });
+});
+
+describe('Check onChange functionality on form fields', () => {
+  test('check onChange on memberName', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const memberNameField = screen.getByLabelText(
+      'Member Name',
+    ) as HTMLInputElement;
+    fireEvent.change(memberNameField, { target: { value: 'test' } });
+  });
+
+  test('check onChange on city', () => {
+    render(
+      <PolicyHolderInformation
+        errorHandling={errorHandling}
+        nextButtonClicked
+        footerToBottom={footerToBottom}
+        profileResponseData={profileResponseData}
+        planDetailsResponseData={planDetailsResponseData}
+      />,
+    );
+    const cityField = screen.getByLabelText('City') as HTMLInputElement;
+    fireEvent.change(cityField, { target: { value: 'new york' } });
+  });
+});
+
