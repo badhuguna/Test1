@@ -1,0 +1,8 @@
+const selectElement = screen.getByPlaceholderText('Please Select');
+
+    // Simulate blur event without selecting an option
+    fireEvent.blur(selectElement);
+
+    // Expect error message to appear
+    const errorMessage = screen.getByText('Service type is required.');
+    expect(errorMessage).toBeInTheDocument();
