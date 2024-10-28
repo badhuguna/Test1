@@ -1,0 +1,8 @@
+ const dateOfServiceInput = screen.getByPlaceholderText(/MM\/DD\/YYYY/i);
+    fireEvent.focus(dateOfServiceInput);
+    fireEvent.blur(dateOfServiceInput);
+const dateOfServiceInputError = screen.getByText(
+        "Examiner's phone number is required.",
+      );
+      expect(dateOfServiceInputError).toBeInTheDocument();
+    });
