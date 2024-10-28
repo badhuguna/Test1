@@ -1,0 +1,17 @@
+const serviceDetails= {
+    serviceType: '',
+    dateOfService: '',
+    expenseIncurred: '',
+    attachments: [],
+  };
+  const errorDetails= {
+    serviceType: false,
+    dateOfService: '',
+    expenseIncurred: false,
+    attachments: false,
+  };
+ const index= 0;
+  const updateService= vi.fn();
+  const updateError= vi.fn(;
+  const updateTotalExpenses= vi.fn();
+  const setIsAttaachmentLoading= vi.fn();
