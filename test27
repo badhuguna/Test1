@@ -1,0 +1,17 @@
+    // Mock data for sessionStorage
+    const mockFormData = {
+      isPolicyHolderPatient: 'YES',
+      patientRelationship: 'Spouse',
+      patientName: 'John Doe',
+      patientDateOfBirth: '01/01/1990',
+      dependents: [{ name: 'Jane Doe', relationship: 'Child' }],
+    };
+
+    // Set the mock data in sessionStorage
+    sessionStorage.setItem('formData', JSON.stringify(mockFormData));
+  });
+
+  afterEach(() => {
+    // Clear sessionStorage after each test
+    sessionStorage.clear();
+  });
