@@ -1,3 +1,4 @@
+ beforeEach(() => {
     // Mock data for sessionStorage
     const mockFormData = {
       isPolicyHolderPatient: 'YES',
