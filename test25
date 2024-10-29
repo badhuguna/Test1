@@ -1,0 +1,6 @@
+const selectInput = screen.getByDisplayValue('Please Select');
+    expect(selectInput).toBeInTheDocument();
+
+    // Open the dropdown and select an option
+    fireEvent.change(selectInput, { target: { value: 'Spouse' } });
+    expect(selectInput.value).toBe('Spouse');
