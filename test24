@@ -1,0 +1,27 @@
+    test('updates errors for isPolicyHolderPatient', () => {
+        render(<PatientInformation errorHandling={() => {}} nextButtonClicked footerToBottom={() => {}} profileResponseData={{}} isValidateForm />);
+        
+       // Select "Yes" radio button for isPolicyHolderPatient
+    const yesRadio = screen.getByLabelText('Yes');
+    fireEvent.click(yesRadio);
+    expect(screen.queryByText('This selection is required.')).not.toBeInTheDocument();
+
+    // Select "No" radio button for isPolicyHolderPatient
+    const noRadio = screen.getByLabelText('No');
+    fireEvent.click(noRadio);
+    expect(screen.queryByText('This selection is required.')).not.toBeInTheDocument();
+      });
+      test('updates errors for patientName', () => {
+        render(<PatientInformation errorHandling={() => {}} nextButtonClicked footerToBottom={() => {}} profileResponseData={{}} isValidateForm />);
+        
+        // Simulate `patientName`
+        fireEvent.change(screen.getByLabelText('Patient Name'), { target: { id: 'patientName', value: '' } });
+        expect(screen.getByText('Patient Name is required')).toBeInTheDocument();
+      });
+      test('updates errors for other fields when empty', () => {
+        render(<PatientInformation errorHandling={() => {}} nextButtonClicked footerToBottom={() => {}} profileResponseData={{}} isValidateForm />);
+        
+        // Simulate other empty field
+        fireEvent.change(screen.getByLabelText('Date of Birth (MM/DD/YYYY)'), { target: { id: 'patientDateOfBirth', value: '' } });
+        expect(screen.getByText("Patient's date of birth is required.")).toBeInTheDocument();
+      });
