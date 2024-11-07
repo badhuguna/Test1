@@ -1,121 +1,229 @@
-import { Box, Button, VisuallyHidden } from '@leagueplatform/genesis-core';
-import { useIntl } from '@leagueplatform/locales';
-import { useLiveChatCta } from '@leagueplatform/live-chat';
-import MessagesBubbleTypingIcon from 'assets/icons/messages-bubble-typing.svg';
-import { UnreadMessageIndicator } from './live-chat-unread-message-indicator';
+/* eslint-disable no-nested-ternary */
+/* eslint-disable array-callback-return */
+import { useHistory } from '@leagueplatform/routing';
+import React, { useState, useEffect } from 'react';
+import { Box, StackLayout, TextAction } from '@leagueplatform/genesis-core';
+import { TobaccoUseForm } from '@leagueplatform/engen-capability-tobacco-use';
 
-export function LiveChatCTA() {
-  const { formatMessage } = useIntl();
-  const { openChat, unreadMessageCount, liveChatButtonRef } = useLiveChatCta();
+import { ContactInfoLibraryComponent } from '@leagueplatform/engen-capability-contact-information-library';
+import { CommunicationLibraryComponent } from '@leagueplatform/engen-capability-communication-preference-library';
+import { PrimaryCareProviderLibraryComponent } from '@leagueplatform/engen-capability-primary-care-provider-library';
+import { accountManagementLibrary } from '../../../account-management.config';
 
-  return (
-    <Box
+import {
+  SidebarLink,
+  useSidebarLinksList,
+  NavIds,
+} from './use-sidebar-links-list.hook';
+// eslint-disable-next-line import/no-cycle
+
+export const AccountManagementComponent = React.memo((props: any) => {
+  const { showModal, setShowModal, plans, baseURLMFA, baseURLTD } = props;
+  const [activeItemIndex, setActiveItemIndex] = useState<number>(-1);
+  const [showCImodal, setShowCImodal] = useState(false);
+  const [showCPmodal, setShowCPmodal] = useState(false);
+  const [userMedical, setUserMedical] = useState(false);
+  const [showPCPmodal, setShowPCPmodal] = useState(false);
+
+  const { navLinks } = useSidebarLinksList();
+  const configAccountManagement = accountManagementLibrary.getConfig();
+  const authWebViewUrl = configAccountManagement.AUTHED_WEBVIEW_URL_NAMES;
+
+  const history = useHistory();
+  // eslint-disable-next-line consistent-return
+  function loadAuthWebView(id: string) {
+    switch (id) {
+      case NavIds.BACKGROUND_INFORMATION: {
+        const backinfoUrl = configAccountManagement.getAuthedWebviewUrl(
+          authWebViewUrl.BACKGROUND_INFORMATION,
+        );
+        configAccountManagement.LinkHandler.handleLink(backinfoUrl);
+        break;
+      }
+      case NavIds.MULTI_FACTOR_AUTHENTICATION: {
+        const mfaUrl = configAccountManagement.getAuthedWebviewUrl(
+          authWebViewUrl.MFA_ENROLLMENT,
+        );
+        configAccountManagement.LinkHandler.handleLink(mfaUrl);
+        break;
+      }
+      case NavIds.CONTACT_INFORMATION: {
+        const contactInfoUrl = configAccountManagement.getAuthedWebviewUrl(
+          authWebViewUrl.CONTACT_INFO,
+        );
+        configAccountManagement.LinkHandler.handleLink(contactInfoUrl);
+        break;
+      }
+      case NavIds.PRIMARY_CARE_PROVIDER: {
+        const primaryCareUrl = configAccountManagement.getAuthedWebviewUrl(
+          authWebViewUrl.PRIMARY_CARE,
+        );
+        configAccountManagement.LinkHandler.handleLink(primaryCareUrl);
+        break;
+      }
+
+      case NavIds.COMMUNICATION_PREFERENCES: {
+        const communicationPrefUrl =
+          configAccountManagement.getAuthedWebviewUrl(
+            authWebViewUrl.COMMUNICATION_PREFERENCES,
+          );
+        configAccountManagement.LinkHandler.handleLink(communicationPrefUrl);
+        break;
+      }
+      case NavIds.CHANGE_PASSWORD: {
+        const changePassword = configAccountManagement.getAuthedWebviewUrl(
+          authWebViewUrl.CHANGE_PASSWORD,
+        );
+        configAccountManagement.LinkHandler.handleLink(changePassword);
+        break;
+      }
+      // eslint-disable-next-line consistent-return
+      default:
+    }
+  }
+
+  const handleContentUpdate = (i: number, id: string) => {
+    setActiveItemIndex(i);
+    loadAuthWebView(id);
+  };
+
+  const handleCIUpdate = (i: number) => {
+    setShowCImodal(true);
+    setActiveItemIndex(i);
+  };
+
+  const handleCPUpdate = (i: number) => {
+    setShowCPmodal(true);
+    setActiveItemIndex(i);
+  };
+
+  const handlePCPUpdate = (i: number) => {
+    setShowPCPmodal(true);
+    setActiveItemIndex(i);
+  };
+
+  useEffect(() => {
+    if (!showModal) setActiveItemIndex(-1);
+  }, [showModal]);
+
+  useEffect(() => {
+    if (!showCImodal) setActiveItemIndex(-1);
+  }, [showCImodal]);
+
+  useEffect(() => {
+    if (!showCPmodal) setActiveItemIndex(-1);
+  }, [showCPmodal]);
+
+  const handleBackgroundInfo = () => {
+    history.push('/background-information');
+  };
+
+  const handleMFA = (i: number) => {
+    setActiveItemIndex(i);
+    window.open(baseURLMFA);
+  };
+
+  const handleTrustedDevices = (i: number) => {
+    setActiveItemIndex(i);
+    window.open(baseURLTD);
+  };
+
+  const navLinkWrapper = (navLink: SidebarLink, index: number) => (
+    <TextAction
+      data-testid={navLink.name}
+      onClick={() =>
+        navLink.name === 'Contact information'
+          ? handleCIUpdate(index)
+          : navLink.name === 'Communication preferences'
+          ? handleCPUpdate(index)
+          : navLink.name === 'Background information'
+          ? handleBackgroundInfo()
+          : navLink.name === 'Primary Care Provider (PCP)'
+          ? handlePCPUpdate(index)
+          : navLink.name === 'Manage multi-factor authentication'
+          ? handleMFA(index)
+          : navLink.name === 'Manage trusted devices'
+          ? handleTrustedDevices(index)
+          : handleContentUpdate(index, navLink.message_id)
+      }
+      as="span"
       css={{
-        position: 'fixed',
-        bottom: '1rem',
-        right: '1rem',
+        fontSize: '$buttonOne',
+        fontWeight: 'bold',
+        lineHeight: '$oneAndHalf',
+        letterSpacing: '-0.20000000298023224px',
+        padding:
+          activeItemIndex === index && !showModal ? '$threeQuarters 21px' : '',
+        color:
+          activeItemIndex === index && !showModal
+            ? '$onSurfaceTextPrimary'
+            : '$interactiveActionPrimary',
+        paddingLeft: activeItemIndex === index && !showModal ? '' : '25px',
+        borderLeft:
+          activeItemIndex === index && !showModal
+            ? '4px solid $interactiveActionPrimary'
+            : 'none',
+        height: activeItemIndex === index && !showModal ? '38px' : '',
       }}
     >
-      <UnreadMessageIndicator unreadMessageCount={unreadMessageCount}>
-        <Button
-          icon={MessagesBubbleTypingIcon}
-          hideLabel
-          priority="primary"
-          onClick={openChat}
-          ref={liveChatButtonRef}
-          css={{
-            '.GDS-icon': { width: '3rem', height: '3rem', margin: '0.5rem' },
-          }}
-          aria-live="polite"
-        >
-          <span aria-hidden>{formatMessage({ id: 'LIVE_CHAT' })}</span>
-          {unreadMessageCount > 0 ? (
-            <VisuallyHidden>
-              {formatMessage(
-                { id: 'LIVE_CHAT_UNREAD_MESSAGES' },
-                { count: unreadMessageCount },
-              )}
-            </VisuallyHidden>
-          ) : (
-            formatMessage({ id: 'LIVE_CHAT' })
-          )}
-        </Button>
-      </UnreadMessageIndicator>
-    </Box>
+      {navLink.name}
+    </TextAction>
   );
-}
 
+  useEffect(() => {
+    const currentYear =
+      plans?.length > 0 &&
+      plans?.filter(
+        (plan: any) =>
+          plan?.planType === 'medical' && plan?.planYear === 'current',
+      );
 
-
-
-
-import { Box, UtilityText } from '@leagueplatform/genesis-core';
-import { MAX_DISPLAY_MESSAGES_COUNT } from 'common/constants';
-
-type UnreadMessageIndicatorProps = {
-  unreadMessageCount: number;
-  children: React.ReactNode;
-};
-
-export function UnreadMessageIndicator({
-  unreadMessageCount,
-  children,
-}: UnreadMessageIndicatorProps) {
-  return (
-    <Box
-      css={{
-        position: 'relative',
-        width: 'fit-content',
-      }}
-    >
-      {unreadMessageCount > 0 ? (
-        <Box
-          css={{
-            position: 'absolute',
-            right: 0,
-            transform: 'translate(30%)',
-            borderRadius: '50%',
-            backgroundColor: '$criticalIcon',
-            pointerEvents: 'none',
-            width: 23,
-            height: 23,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <UtilityText
-            aria-hidden
-            css={{
-              typography: '$caption',
-              color: '$onSurfaceTextReversed',
-            }}
-          >
-            {unreadMessageCount > MAX_DISPLAY_MESSAGES_COUNT
-              ? `${MAX_DISPLAY_MESSAGES_COUNT}+`
-              : unreadMessageCount}
-          </UtilityText>
-        </Box>
-      ) : null}
-      {children}
-    </Box>
-  );
-}
-
-
-
-
-
-import { LiveChatContainer, useLiveChatCta } from '@leagueplatform/live-chat';
-import { LiveChatCTA } from './live-chat-cta.component';
-
-export function LiveChat() {
-  const { isVisible } = useLiveChatCta();
+    setUserMedical(currentYear?.length > 0);
+  }, [plans]);
 
   return (
-    <>
-      {isVisible ? <LiveChatCTA /> : null}
-      <LiveChatContainer />
-    </>
+    <Box>
+      <StackLayout
+        orientation="vertical"
+        data-testid="side-nav-menu"
+        css={{ lineHeight: '45px' }}
+      >
+        {/* {navLinks.map((navLink, index) => navLinkWrapper(navLink, index))} */}
+        {plans === null || plans === undefined || !userMedical
+          ? navLinks
+              .filter(
+                (navLink) => navLink?.name !== 'Primary Care Provider (PCP)',
+              )
+              .map((navLink, index) => navLinkWrapper(navLink, index))
+          : navLinks.map((navLink, index) => navLinkWrapper(navLink, index))}
+
+        <TobaccoUseForm
+          hideButton
+          showModal={showModal}
+          setShowModal={setShowModal}
+        />
+        {showCImodal && (
+          <ContactInfoLibraryComponent
+            hideButton
+            showModal={showCImodal}
+            setShowModal={setShowCImodal}
+          />
+        )}
+        {showCPmodal && (
+          <CommunicationLibraryComponent
+            hideButton
+            showModal={showCPmodal}
+            setShowModal={setShowCPmodal}
+          />
+        )}
+        {showPCPmodal && (
+          <PrimaryCareProviderLibraryComponent
+            hideButton
+            showModal={showPCPmodal}
+            setShowModal={setShowPCPmodal}
+          />
+        )}
+      </StackLayout>
+    </Box>
   );
-}
+});
